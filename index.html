@@ -1,0 +1,72 @@
+<meta charset="utf-8">
+<head>
+    <script type="text/javascript" src="./d3/d3.min.js"></script>
+</head>
+<body>
+    <svg width=800 height=300></svg>
+</body>
+<script>
+    let barHeight = 20;
+    let labelWidth = 100;
+    let data = [
+        { label: "Division 1", value: 315 },
+        { label: "Division 2", value: 26 },
+        { label: "Division 3", value: 1156 },
+        { label: "Division 4", value: 658 },
+        { label: "Division 5", value: 487 },
+        { label: "Division 6", value: 985 }
+    ]
+
+    let scale = d3.scaleLinear()
+        .domain([0, 1500])
+        .range([0, 600]);
+
+    let xAxis = d3.axisBottom().scale(scale).tickValues([20, 100, 500, 1200]);
+
+    let svg = d3.select('svg');
+
+    let chart = svg.selectAll("g")
+        .data(data)
+        .enter()
+    
+    //label
+    chart.append("g")
+        .attr("transform", function (data, index) {
+            return `translate(0, ${index * barHeight})`
+        })
+        .append("text")
+        .attr("x", 0)
+        .attr("y", barHeight / 2)
+        .attr("dy", ".35em")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", 12)
+        .attr("style", "fill: #000000")
+        .text(function (data) { return data.label });
+        
+    let bar = chart.append("g")
+        .attr("transform", function (data, index) {
+            return `translate(${labelWidth}, ${index * barHeight})`
+        });
+
+    bar.append("rect")
+        .attr("style", "fill: #373737; stroke-width: 2; stroke: #ffffff")
+        .attr("height", barHeight)
+        .attr("width", function(data) {
+            return scale(data.value)
+        });
+
+    bar.append("text")
+        .attr("x", function (data) { 
+            return scale(data.value);
+        })
+        .attr("y", barHeight / 2)
+        .attr("dy", ".35em")
+        .attr("font-family", "sans-serif")
+        .attr("font-size", 12)
+        .attr("style", "fill: #000000")
+        .text(function (data) { return data.value });
+
+    svg.append('g')
+        .attr("transform", `translate(${labelWidth}, ${data.length * barHeight + 10})`)
+        .call(xAxis);
+</script>
